@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MonoBot 💖</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+    #chatbox {
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .message {
+      margin: 5px 0;
+    }
+    .user {
+      text-align: right;
+      color: #007bff;
+    }
+    .bot {
+      text-align: left;
+      color: #e91e63;
+    }
+  </style>
+</head>
+<body>
+  <h2>💖 MonoBot – Your Sweet AI Friend</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="input" placeholder="Type your message..." style="width: 80%; padding: 10px;" />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const chatbox = document.getElementById("chatbox");
+
+    function addMessage(sender, text) {
+      const div = document.createElement("div");
+      div.className = "message " + sender;
+      div.textContent = text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage("user", "You: " + text);
+      input.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      addMessage("bot", data.reply);
+    }
+  </script>
+</body>
+</html>
